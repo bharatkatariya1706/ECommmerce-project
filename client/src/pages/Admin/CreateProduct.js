@@ -17,6 +17,7 @@ const CreateProduct = () => {
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
   const [photo, setPhoto] = useState("");
+ 
 
   //get all category
   const getAllCategory = async () => {
@@ -34,6 +35,8 @@ const CreateProduct = () => {
   useEffect(() => {
     getAllCategory();
   }, []);
+
+  
 
   //create product function
   const handleCreate = async (e) => {

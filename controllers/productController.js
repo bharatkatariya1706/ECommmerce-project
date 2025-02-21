@@ -1,11 +1,12 @@
 import productModel from "../models/productModel.js"
-import fs from 'fs'
+import fs from 'fs' // use for formidable package which is used for images
 import slugify from "slugify"
 
 export const createProductController = async (req, res) => {
     try {
         const { name, slug, description, price, category, quantity, shipping } = req.fields
-        const { photo } = req.files//validation
+        const { photo } = req.files
+        //validation
         switch (true) {
             case !name:
                 return res.status(500).send({ error: 'Name is Required' })
@@ -17,7 +18,7 @@ export const createProductController = async (req, res) => {
                 return res.status(500).send({ error: 'Category is Required' })
             case !quantity:
                 return res.status(500).send({ error: 'Quantity is Required' })
-            case photo && photo.size > 1000000:
+            case !photo || photo.size > 1000000:
                 return res.status(500).send({ error: 'photo is Required and should be less than 1MB' })
 
         }
@@ -68,7 +69,7 @@ export const getAllProductsController = async (req, res) => {
 //get single product
 export const getSingleProductController = async (req, res) => {
     try {
-        const { id } = req.params
+        // const { id } = req.params
         const product = await productModel.findOne({ slug: req.params.slug }).select('-photo').populate('category');
         res.status(200).send({
             success: true,

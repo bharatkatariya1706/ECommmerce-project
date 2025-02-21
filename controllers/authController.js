@@ -97,7 +97,8 @@ export const loginController = async (req, res) => {
                 phone: user.phone,
                 address: user.address,
                 role: user.role, 
-            }, token,
+            }, 
+            token,
         })
     }
     catch (error) {
