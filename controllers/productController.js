@@ -1,5 +1,6 @@
 import productModel from "../models/productModel.js"
 import fs from 'fs' // use for formidable package which is used for images
+import { send } from "process"
 import slugify from "slugify"
 
 export const createProductController = async (req, res) => {
@@ -68,6 +69,7 @@ export const getAllProductsController = async (req, res) => {
 
 //get single product
 export const getSingleProductController = async (req, res) => {
+
     try {
         // const { id } = req.params
         const product = await productModel.findOne({ slug: req.params.slug }).select('-photo').populate('category');
@@ -169,4 +171,99 @@ export const updateProductController=async(req,res)=>{
                 message: 'Error in updating product'
             })
     }   
+}
+
+//filter controller
+export const productFilterController = async (req, res) => {
+    try {
+        const { checked, radio } = req.body;
+        // console.log(checked , radio);
+        let args = {};
+        if (checked.length > 0) args.category = checked;
+        if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+        console.log('args',args);
+        const products = await productModel.find(args);
+        res.status(200).send({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            message: "Error WHile Filtering Products",
+            error,
+        });
+    }
+};
+
+
+//product count
+export const productCountController = async(req,res)=>{
+    try{
+        const total = await productModel.find({}).estimatedDocumentCount();
+        res.status(200).send({
+            success:true,
+            total
+        })
+        
+    }
+    catch(error){
+        console.log(error)
+        res.status(400).send({
+            message:'Error in product count',
+            error,
+            success:false,
+        })
+    }
+}
+
+// product list base on page
+export const productListController = async(req,res)=>{
+    try{
+        const perPage =3;
+        console.log('yoooooo')
+        const page = req.params.page ? req.params.page :1
+        const products = await productModel
+        .find({})
+        .select('-photo')
+        .skip((page-1)*perPage)
+        .limit(perPage)
+        .sort({createdAt:-1})
+
+        res.status(200).send({
+            success:true,
+            products,
+        })
+    }
+    catch(error){
+        console.log(error)
+        res.status(400).send({
+            success:false,
+            meessage:'error in per page ctrl',
+            error
+        })
+    }
+}
+
+// search product
+export const searchProductController=async(req,res)=>{
+    try{
+            const {keyword} =req.params
+            const result = await productModel.find({
+                $or:[
+                    {name:{$regex:keyword,$options:'i'}},
+                    {description:{$regex:keyword,$options:'i'}}
+                ]
+            }).select('-photo');
+            res.json(result)
+    }
+    catch(error){
+         console.log(error)
+         res.status(400).send({
+            success:false,
+            message:'Error in search product api',
+            error,
+         })
+    }
 }
