@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductController, productCountController, productFilterController, productListController, searchProductController, updateProductController } from '../controllers/productController.js';
+import { createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductController, productCategoryController, productCountController, productFilterController, productListController, relatedProductController, searchProductController, updateProductController } from '../controllers/productController.js';
 import {requireSignIn , isAdmin} from '../middlewares/authMiddleware.js'
 import formidable from 'express-formidable';
 
@@ -34,6 +34,12 @@ router.get('/product-list/:page' , productListController)
 
 //search product
 router.get('/search/:keyword' , searchProductController)
+
+//similar products ---
+router.get('/related-product/:pid/:cid' , relatedProductController)
+
+//category wise products
+router.get('/product-category/:slug' , productCategoryController)
 
 
 export default router 

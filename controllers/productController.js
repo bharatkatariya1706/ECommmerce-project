@@ -2,6 +2,7 @@ import productModel from "../models/productModel.js"
 import fs from 'fs' // use for formidable package which is used for images
 import { send } from "process"
 import slugify from "slugify"
+import CategoryModel from "../models/CategoryModel.js"
 
 export const createProductController = async (req, res) => {
     try {
@@ -265,5 +266,53 @@ export const searchProductController=async(req,res)=>{
             message:'Error in search product api',
             error,
          })
+    }
+}
+
+//similar produdcts--;
+export const relatedProductController=async(req,res)=>{
+   try{
+    const {pid,cid} = req.params
+    const products=  await productModel.find({
+        category:cid,
+        _id:{$ne:pid}
+    }).select('-photo').limit(3).populate('category')
+    res.status(200).send({
+      success:true,
+      products
+    })
+
+   }
+   catch(error){
+    console.log(error)
+    res.send(400).send({
+        success:false,
+        message:'error while getting related products',
+        error
+    })
+   }
+}
+
+// get products by category
+export const productCategoryController = async(req,res)=>{
+    try{
+      const category = await CategoryModel.findOne({slug:req.params.slug})
+      
+      const products = await productModel.find({category}).populate('category')
+      console.log(products)
+      console.log(category)
+      res.status(200).send({
+        success:true,
+        category,
+        products,
+      })
+    }
+    catch(error){
+        console.log(error),
+        res.status(400).send({
+            success:false,
+            error,
+            message: 'Error while getting product'
+        })
     }
 }
