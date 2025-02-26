@@ -1,6 +1,5 @@
 import productModel from "../models/productModel.js"
 import fs from 'fs' // use for formidable package which is used for images
-import { send } from "process"
 import slugify from "slugify"
 import CategoryModel from "../models/CategoryModel.js"
 import braintree from "braintree"
