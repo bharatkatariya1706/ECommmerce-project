@@ -1,12 +1,13 @@
-import React,{useState ,useEffect} from 'react'
-import Layout from '../components/layout/Layout';
-import { useCart } from '../context/cart';
-import { useAuth } from '../context/auth';
-import axios from 'axios';
-// import { useAuth } from '../context/auth';
-import { useNavigate } from 'react-router-dom';
-import DropIn from 'braintree-web-drop-in-react';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import Layout from "./../components/layout/Layout";
+import { useCart } from "../context/cart";
+import { useAuth } from "../context/auth";
+import { useNavigate } from "react-router-dom";
+import DropIn from "braintree-web-drop-in-react";
+import { AiFillWarning } from "react-icons/ai";
+import axios from "axios";
+import toast from "react-hot-toast";
+import "../styles/CartStyles.css";
 
 const CartPage = () => {
     const [auth, setAuth] = useAuth();
@@ -15,6 +16,7 @@ const CartPage = () => {
     const [instance, setInstance] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
     //total price
     const totalPrice = () => {
         try {
@@ -95,7 +97,7 @@ const CartPage = () => {
                 </div>
                 <div className="container ">
                     <div className="row ">
-                        <div className="col-md-5  p-0 m-5">
+                        <div className="col-md-7  p-0 m-0">
                             {cart?.map((p) => (
                                 <div className="row card flex-row" key={p._id}>
                                     <div className="col-md-4">
@@ -123,7 +125,7 @@ const CartPage = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className="col-md-5 cart-summary text-center ">
+                        <div className="col-md-5 cart-summary ">
                             <h2>Cart Summary</h2>
                             <p>Total | Checkout | Payment</p>
                             <hr />
@@ -168,7 +170,7 @@ const CartPage = () => {
                                 {!clientToken || !auth?.token || !cart?.length ? (
                                     ""
                                 ) : (
-                  <>
+                                    <>
                                         <DropIn
                                             options={{
                                                 authorization: clientToken,
@@ -180,7 +182,7 @@ const CartPage = () => {
                                         />
 
                                         <button
-                                            className="btn btn-primary mb-3"
+                                            className="btn btn-primary"
                                             onClick={handlePayment}
                                             disabled={loading || !instance || !auth?.user?.address}
                                         >
@@ -197,5 +199,4 @@ const CartPage = () => {
     );
 };
 
-
-export default CartPage
+export default CartPage;
